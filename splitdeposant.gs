@@ -51,4 +51,31 @@ function onFormSubmit(e) {
   }
 
   targetSheet.appendRow(rowToInsert);
+
+  // Réordonner tous les onglets par ordre alphabétique
+  sortSheetsAlphabetically();
+}
+
+/**
+ * Trie les onglets du classeur par ordre alphabétique.
+ * Conserve le premier onglet existant en tête.
+ */
+function sortSheetsAlphabetically() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+
+  if (sheets.length <= 1) {
+    return; // rien à trier
+  }
+
+  var mainSheet = sheets[0];
+  var rest = sheets.slice(1).sort(function(a, b) {
+    return a.getName().localeCompare(b.getName());
+  });
+
+  var ordered = [mainSheet].concat(rest);
+  ordered.forEach(function(sheet, index) {
+    ss.setActiveSheet(sheet);
+    ss.moveActiveSheet(index + 1); // positions 1-indexées
+  });
 }
